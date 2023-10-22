@@ -165,7 +165,6 @@
 			    <?php
 				use App\Models\Category;
 				$product =Product::findOrFail($productId);
-				$category=Category::findOrFail($product->category_id);
 				$itemAddedFlag=$userItemController->isThisItemAddedToCart($productId); ?>
 				<div class="images-section">
 					<div class="larg-img">
@@ -205,7 +204,7 @@
 					</div>
 					<hr>
 					<div class="product-meta">
-						<p><b>Category: </b><a style="text-decoration:none;color:#2F4F4F" href="shop?cat={{$category->category_name}}&countOfProducts=6">{{$category->category_name}}</a></p>
+						<p><b>Category: </b><a style="text-decoration:none;color:#2F4F4F" href="shop?cat={{$product->category_name}}&countOfProducts=6">{{$product->category_name}}</a></p>
 						
 					</div>
 				</div> <!-- End of Product Detail-->
@@ -228,7 +227,7 @@
 							<img src={{$product->image}}>
 						</a>
 						<div class="product-detail">
-							<h3><?php Category::findOrFail($product->category_id)->category_name;?></h3>
+							<h3>{{$product->category_name}}</h3>
 							<h2>{{$product->name}}</h2>
 							@if(! $itemAddedFlag)
 							<a href="add-to-cart/{{$product->id}}" style="background-color:white">Add to Cart</a>
@@ -249,10 +248,10 @@
 		    if(isset($searchResult)): ?>
 		<div class="search-result" style="">
 		<?php foreach($searchResult as $result): ?>
-			<?php $categoryName=Category::findOrFail($result->category_id)->category_name;?>
+			<?php $categoryName=$result->category_name;?>
 			
 			<div class="single-result">
-				<div class="category-res"><a class="category-result-a" href="shop?cat={{$categoryName}}">{{$categoryName}}</a></div>
+				<div class="category-res"><a class="category-result-a" href="shop?cat={{$product->category_name}}">{{$product->category_name}}</a></div>
 				<div class="product-res">
 				<a class="product-res-a" href="product?productId={{$result->id}}">
 					<div class="product-res-head">

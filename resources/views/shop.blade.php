@@ -152,7 +152,6 @@
 				</div>
 				<div class="product-content">
 				<?php
-				use App\Models\Category;
 				use App\Http\Controllers\ProductController;
 				$productController=new ProductController();
 				$products=$productController->getShopProductsByCategoryName($_GET['cat'], $countOfProducts);?>
@@ -163,7 +162,7 @@
 						<img src="{{$product->image}}">
 					</a>
 					<div class="product-detail">
-						<h3><?php print(Category::find($product->category_id)['category-name']) ?></h3>
+						<h3><?php print($product->category_name) ?></h3>
 						<h2>{{$product->name}}</h2>
 						@if(!$itemAddedFlag)
 							<a href="add-to-cart/{{$product->id}}" style="background-color:white">Add to Cart</a>
@@ -187,7 +186,7 @@
 		    if(isset($searchResult)): ?>
 		<div class="search-result" style="">
 		<?php foreach($searchResult as $result): ?>
-			<?php $categoryName=Category::findOrFail($result->category_id)->category_name;?>
+			<?php $categoryName=$result->category_name;?>
 			
 			<div class="single-result">
 				<div class="category-res"><a class="category-result-a" href="shop?cat={{$categoryName}}">{{$categoryName}}</a></div>

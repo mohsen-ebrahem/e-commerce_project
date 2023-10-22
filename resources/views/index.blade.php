@@ -11,7 +11,7 @@
  		<!-- Style Sheet -->
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
 		<!-- Javascript -->	
-		<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
 		<link rel="stylesheet" href={{URL::asset('https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css')}}>
   		<script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
   		<script>
@@ -186,14 +186,13 @@
 				@foreach($trendingProductsIds as $productId)
 				<?php
 				$product=Product::findOrFail($productId);
-				$category=Category::findOrFail($product->category_id);
 				$itemAddedFlag=$userItemController->isThisItemAddedToCart($productId);?>
 				<div class="product">
 						<a href="product?productId={{$product->id}}">
 							<img src="{{$product->image}}">
 						</a>
 						<div class="product-detail">
-							<h3>{{$category->name}}</h3>
+							<h3>{{$product->category_name}}</h3>
 							<h2>{{$product->name}}</h2>
 							@if(! $itemAddedFlag)
 							<a href="add-to-cart/{{$product->id}}" style="background-color:white">Add to Cart</a>
@@ -235,7 +234,7 @@
 							<img src={{$product->image}}>
 						</a>
 						<div class="product-detail">
-							<h3><?php Category::findOrFail($product->category_id)->category_name;?></h3>
+							<h3>{{$product->category_name}}</h3>
 							<h2>{{$product->name}}</h2>
 							@if(! $itemAddedFlag)
 							<a href="add-to-cart/{{$product->id}}" style="background-color:white">Add to Cart</a>
@@ -256,7 +255,7 @@
 		    if(isset($searchResult)): ?>
 		<div class="search-result" style="">
 		<?php foreach($searchResult as $result): ?>
-			<?php $categoryName=Category::findOrFail($result->category_id)->category_name;?>
+			<?php $categoryName=$result->category_name; ?>
 			
 			<div class="single-result">
 				<div class="category-res"><a class="category-result-a" href="shop?cat={{$categoryName}}">{{$categoryName}}</a></div>

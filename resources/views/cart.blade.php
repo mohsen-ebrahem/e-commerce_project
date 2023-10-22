@@ -189,7 +189,9 @@
 						<tbody>
 							<?php
 							$numberOfItems=0;
-							$cartTotalCost=0; ?>
+							$cartTotalCost=0; 
+							$cartItems=DB::table('product_user')->where('user_id','=', Auth::id())->where('order_id','=',NULL)->get();
+							?>
 							@foreach($cartItems as $item)
 							    <?php
 								$product=Product::findOrFail($item->product_id);
@@ -203,7 +205,7 @@
 									<br>
 									<h3>Price: {{$product->price}}</h3>
 									<br>
-									<a href="{{route('delete_item',['itemId'=>"{$product->id}"])}}">x</a> Remove
+									<a href="{{route('delete_item',['itemId'=>"{$item->id}"])}}">x</a> Remove
 								</td>
 								<td class="qty" style="width: 15%;">
 									<div class="prev">-</div>

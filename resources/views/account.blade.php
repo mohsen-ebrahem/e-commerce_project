@@ -166,7 +166,7 @@
 					<h2>Account</h2>
 					<div class="billing-detail">
 
-						<form method="post" action="{{route('update-info',['id'=>"{$user->id}"])}}" class="checkout-form">
+						<form method="post" action="{{route('update-info')}}" class="checkout-form">
 						@csrf
 							<div class="form-inline">
 								<div class="form-group">
