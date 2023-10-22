@@ -6,24 +6,23 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 
-use Illuminate\Database\Query\JoinClause;
 class UserItemsController extends Controller
 {
     public function getWishedProducts(){
-        $userId=Auth::id();
-		$wishedProducts=DB::table('user_wish_product')->where('user_id','=', $userId)->get();
+		$wishedProducts=DB::table('user_wish_product')->where('user_id','=', Auth::id())->select('product_id')->get();
         return $wishedProducts;
     }
 
 
     public function getCartItems(){
-        $cartItems=DB::table('product_user')->where('user_id','=', Auth::id())->where('order_id','=',NULL)->get();
+        $cartItems=DB::table('product_user')->where('user_id','=', Auth::id())->where('order_id','=',NULL)->select('product_id')->get();
         return $cartItems;
     }
 
     public function getTrendingProducts(){
 
-        $products=Product::all();
+        //$products=Product::all();
+        $products=Product::select("id")->get();
         $productsStatistics=[];
 
         foreach($products as $product){
@@ -42,13 +41,12 @@ class UserItemsController extends Controller
 
     public function getRecommendedProducts(){
         $recommendedCategories=UserItemsController::getRecommendedCategories();
-        if(count($recommendedCategories)>0){
+        if( Auth::check() & count($recommendedCategories)>0){
             $recommendedProductsIds=[];
             foreach($recommendedCategories as $category){
-                $recommendedProducts=Product::all()->where('category_id','=',$category->category_id);
-                foreach($recommendedProducts as $product){
+                $recommendedProducts=DB::table('products')->where('category_name', '=', $category->category_name)->select('id')->paginate(8);
+                foreach($recommendedProducts as $product)
                     $recommendedProductsIds[]=$product->id;
-                }
             }
             return array_slice($recommendedProductsIds,0,8);
         }
@@ -57,9 +55,10 @@ class UserItemsController extends Controller
 
     private function getRecommendedCategories(){
         return DB::table('product_user')->join('products','product_user.product_id','=','products.id')
-        ->join('categories',function(JoinClause $join){
-            $join->on('products.category_id','=','categories.id')->where('product_user.user_id','=',Auth::id());
-        })->select('products.category_id')->groupBy('products.category_id')->orderBy(DB::raw('count(products.id)'), 'desc')->get();
+        ->where('product_user.user_id','=',Auth::id())
+        ->select('products.category_name')
+        ->groupBy('products.category_name')
+        ->orderBy(DB::raw('count(products.id)'), 'desc')->get();
     }
 
     public function isThisItemAddedToCart($itemId){
@@ -70,19 +69,6 @@ class UserItemsController extends Controller
     public function isThisItemWished($itemId){
         $countOfWished=DB::table('user_wish_product')->where('product_id','=',$itemId)->where('user_id','=',Auth::id())->count();
         return $countOfWished>0;
-    }
-
-    public function getShopProductsByCategoryName($categoryName, $countOfProducts){
-                if($categoryName=='all')
-			        return Product::paginate($countOfProducts);
-				if($categoryName=="Men's clothes")
-                    return Product::where('category_id','=','1')->paginate($countOfProducts);
-				if($categoryName=="Men's shoes")
-                    return Product::where('category_id','=','2')->paginate($countOfProducts);
-				if($categoryName=="women's clothes")
-                    return Product::where('category_id','=','3')->paginate($countOfProducts);
-			
-                return Product::where('category_id','=','4')->paginate($countOfProducts);
     }
 
 }

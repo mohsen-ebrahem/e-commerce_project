@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AccountUpdateRequest;
 
 class UserInfoController extends Controller
@@ -68,16 +69,17 @@ class UserInfoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(AccountUpdateRequest $request, $id)
+    public function update(AccountUpdateRequest $request)
     {
     
-        $user=DB::table('user_info')->where('user_id','=',$id)->get();
+        $userId=Auth::id();
+        $userCount=DB::table('user_info')->where('user_id','=',$userId)->count();
 
-        if(count($user)==0)
-            DB::table('user_info')->insert(['city' => $request->city, 'address'=>$request->address, 'mobile'=>$request->mobile, 'user_id'=>$id]);
+        if($userCount==0)
+            DB::table('user_info')->insert(['city' => $request->city, 'address'=>$request->address, 'mobile'=>$request->mobile, 'user_id'=>$userId]);
         
         else
-            DB::table('user_info')->where('user_id','=', $id)->update(['city' => $request->city,'address'=>$request->address,'mobile'=>$request->mobile,'user_id'=>$id]);
+            DB::table('user_info')->where('user_id','=', $userId)->update(['city' => $request->city,'address'=>$request->address,'mobile'=>$request->mobile,'user_id'=>$userId]);
         
         return redirect(url()->previous());
     }
